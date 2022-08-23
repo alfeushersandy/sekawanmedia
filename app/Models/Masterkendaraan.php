@@ -11,4 +11,8 @@ class Masterkendaraan extends Model
     protected $table = 'master_kendaraan';
     protected $primaryKey = 'id_kendaraan';
     protected $guarded = [];
+
+    public function permintaan(){
+        return $this->belongsTo(PermintaanKendaraan::class, 'kendaraan_id', 'id_kendaraan');
+    }
 }

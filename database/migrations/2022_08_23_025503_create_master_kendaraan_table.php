@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamp('pekerjaan_terakhir')->nullable();
             $table->timestamp('konsumsi_bbm_terakhir')->nullable();
             $table->timestamp('service_terakhir')->nullable();
+            $table->boolean('status');
             $table->timestamps();
         });
     }

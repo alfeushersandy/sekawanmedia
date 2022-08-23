@@ -16,14 +16,16 @@ return new class extends Migration
         Schema::create('tb_permintaan_kendaraan', function (Blueprint $table) {
             $table->id('id_permintaan');
             $table->date('tanggal');
+            $table->string('kode_permintaan')->unique();
             $table->string('pemohon');
             $table->string('keperluan');
             $table->unsignedBigInteger('kendaraan_id');
             $table->unsignedBigInteger('driver_id');
             $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali');
-            $table->boolean('approval_1');
-            $table->boolean('approval_2');
+            $table->date('tanggal_kembali')->nullable();
+            $table->boolean('approval_1')->nullable();
+            $table->boolean('approval_2')->nullable();
+            $table->string('status');
             $table->timestamps();
 
             $table->foreign('kendaraan_id')->references('id_kendaraan')->on('master_kendaraan');

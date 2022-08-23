@@ -25,6 +25,14 @@ class KendaraanController extends Controller
         return DataTables()
             ->of($kendaraan)
             ->addIndexColumn()
+            ->addColumn('status', function ($driver) {
+                if($driver->status == 1){
+                    return '<span>Tersedia</span>';
+                }else{
+                    return '<span>Sedang Digunakan</span>';
+                }
+            })
+            ->rawColumns(['status'])
             ->make(true);
     }
 
@@ -55,6 +63,7 @@ class KendaraanController extends Controller
         $kendaraan->pekerjaan_terakhir = Null;
         $kendaraan->konsumsi_bbm_terakhir = Null;
         $kendaraan->service_terakhir = Null;
+        $kendaraan->status = true;
         $kendaraan->save();
 
         toast('data berhasil ditambahkan', 'success');

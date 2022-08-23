@@ -6,6 +6,9 @@ use App\Models\Driver;
 use App\Models\Masterkendaraan;
 use App\Models\PermintaanKendaraan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Exports\PermintaanExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermintaankendaraanController extends Controller
 {
@@ -16,7 +19,7 @@ class PermintaankendaraanController extends Controller
      */
     public function index()
     {
-        $kendaraan = Masterkendaraan::all();
+        $kendaraan = Masterkendaraan::where('status', 1)->get();
         $driver = Driver::where('status', 1)->pluck('nama_driver', 'id_driver');
         return view('permintaan_kendaraan.index', compact('kendaraan', 'driver'));
     }
@@ -24,10 +27,22 @@ class PermintaankendaraanController extends Controller
     public function data()
     {
         
-        $permintaan = PermintaanKendaraan::all();
+        $permintaan = DB::table('tb_permintaan_kendaraan')
+                    ->leftJoin('master_kendaraan', 'master_kendaraan.id_kendaraan', '=', 'tb_permintaan_kendaraan.kendaraan_id')
+                    ->leftJoin('driver', 'driver.id_driver', '=', 'tb_permintaan_kendaraan.driver_id')
+                    ->select('tb_permintaan_kendaraan.*', 'master_kendaraan.nama_kendaraan', 'driver.nama_driver')
+                    ->get();
         return DataTables()
             ->of($permintaan)
             ->addIndexColumn()
+            ->addColumn('aksi', function ($permintaan) {
+                return '
+                <div class="btn-group">
+                    <a href="'. route('permintaan.setuju', $permintaan->id_permintaan) .'" class="btn btn-danger">Approve</a>
+                </div>
+                ';
+            })
+            ->rawColumns(['aksi'])
             ->make(true);
     }
 
@@ -49,7 +64,12 @@ class PermintaankendaraanController extends Controller
      */
     public function store(Request $request)
     {
+        $permintaan = PermintaanKendaraan::latest()->first() ?? new PermintaanKendaraan();
+        $kode_permintaan1 = substr($permintaan->kode_permintaan,2);
+        $kode_permintaan = (int) $kode_permintaan1 +1;
+
         $permintaan = new PermintaanKendaraan();
+        $permintaan->kode_permintaan = 'PM'.tambah_nol_didepan($kode_permintaan, 5);
         $permintaan->tanggal = now();
         $permintaan->pemohon = $request->pemohon;
         $permintaan->keperluan = $request->keperluan;
@@ -59,9 +79,26 @@ class PermintaankendaraanController extends Controller
         $permintaan->tanggal_kembali = Null;
         $permintaan->approval_1 = Null;
         $permintaan->approval_2 = Null;
+        $permintaan->status = 'submited';
         $permintaan->save();
 
         toast('data berhasil ditambahkan', 'success');
+
+        return redirect()->route('permintaan.index');
+    }
+
+    public function approve($id){
+        $permintaan = PermintaanKendaraan::find($id);
+        $permintaan->status = 'Approved';
+        $permintaan->update();
+
+        $driver = Driver::find($permintaan->driver_id);
+        $driver->status = false;
+        $driver->update();
+
+        $driver = Masterkendaraan::find($permintaan->kendaraan_id);
+        $driver->status = false;
+        $driver->update();
 
         return redirect()->route('permintaan.index');
     }
@@ -116,5 +153,10 @@ class PermintaankendaraanController extends Controller
         $permintaan->delete();
 
         return response(null, 204);
+    }
+
+    public function export() 
+    {
+        return Excel::download(new PermintaanExport, 'permintaan.xlsx');
     }
 }

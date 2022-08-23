@@ -11,4 +11,8 @@ class PermintaanKendaraan extends Model
     protected $table = 'tb_permintaan_kendaraan';
     protected $primaryKey = 'id_permintaan';
     protected $guarded = [];
+
+    public function kendaraan(){
+        return $this->hasMany(Masterkendaraan::class, 'id_kendaraan', 'kendaraan_id');
+    }
 }

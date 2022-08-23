@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('driver', function (Blueprint $table) {
-            $table->id('id_driver');
-            $table->string('nama_driver');
-            $table->string('no_hp');
-            $table->boolean('status')->nullable();
+        Schema::create('permintaan_bbm', function (Blueprint $table) {
+            $table->id('id_permintaan_bbm');
+            $table->date('tanggal');
+            $table->unsignedBigInteger('permintaan_id');
+            $table->integer('jumlah');
             $table->timestamps();
+
+            $table->foreign('permintaan_id')->references('id_permintaan')->on('tb_permintaan_kendaraan');
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('driver');
+        Schema::dropIfExists('permintaan_bbm');
     }
 };

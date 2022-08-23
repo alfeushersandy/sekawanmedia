@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Driver;
+use App\Models\PermintaanBbm;
+use App\Models\PermintaanKendaraan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class DriverController extends Controller
+class PermintaanBbmController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,25 +16,8 @@ class DriverController extends Controller
      */
     public function index()
     {
-        return view('driver.index');
-    }
-
-    public function data()
-    {
-        
-        $driver = Driver::all();
-        return DataTables()
-            ->of($driver)
-            ->addIndexColumn()
-            ->addColumn('status', function ($driver) {
-                if($driver->status == 1){
-                    return '<span>Tersedia</span>';
-                }else{
-                    return '<span>Sedang Bertugas</span>';
-                }
-            })
-            ->rawColumns(['status'])
-            ->make(true);
+        $permintaan = PermintaanKendaraan::all();
+        return view('permintaan_bbm.index', compact('permintaan'));
     }
 
     /**
@@ -45,6 +30,21 @@ class DriverController extends Controller
         //
     }
 
+    public function data()
+    {
+        
+        $permintaan = DB::table('permintaan_bbm')
+                    ->leftJoin('tb_permintaan_kendaraan', 'tb_permintaan_kendaraan.id_permintaan', '=', 'permintaan_bbm.permintaan_id')
+                    ->leftJoin('driver', 'driver.id_driver', '=', 'tb_permintaan_kendaraan.driver_id')
+                    ->leftJoin('master_kendaraan', 'master_kendaraan.id_kendaraan', '=', 'tb_permintaan_kendaraan.kendaraan_id')
+                    ->select('permintaan_bbm.*', 'master_kendaraan.nama_kendaraan', 'driver.nama_driver', 'tb_permintaan_kendaraan.kode_permintaan')
+                    ->get();
+        return DataTables()
+            ->of($permintaan)
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -53,15 +53,15 @@ class DriverController extends Controller
      */
     public function store(Request $request)
     {
-        $driver = new Driver();
-        $driver->nama_driver = $request->nama_driver;
-        $driver->no_hp = $request->no_hp;
-        $driver->status = true;
-        $driver->save();
+        $permintaan = new PermintaanBbm();
+        $permintaan->tanggal = now();
+        $permintaan->permintaan_id = $request->id_permintaan;
+        $permintaan->jumlah = $request->jumlah;
+        $permintaan->save();
 
-        toast('data driver berhasil ditambahkan', 'success');
+        toast('data berhasil ditambahkan', 'success');
 
-        return redirect()->route('driver.index');
+        return redirect()->route('bensin.index');
     }
 
     /**

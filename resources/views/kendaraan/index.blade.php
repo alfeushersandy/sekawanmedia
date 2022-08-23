@@ -25,6 +25,7 @@
                             <th>Terakhir Bekerja</th>
                             <th>Terakhir BBM</th>
                             <th>Terakhir Service</th>
+                            <th>Status</th>
                             <th width="15%"><i class="fa fa-cog"></i></th>
                         </thead>
                     </table>
@@ -57,6 +58,7 @@ $(function () {
             {data: 'pekerjaan_terakhir'},
             {data: 'konsumsi_bbm_terakhir'},
             {data: 'service_terakhir'},
+            {data: 'status'},
         ]
     });
 
