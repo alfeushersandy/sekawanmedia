@@ -1,5 +1,11 @@
 Aplikasi Ini dibuat sebagai test backend enginer pada sekawanMedia namun belum selesai ketika tenggat waktu yang ditentukan namun akan terus saya kembangkan. 
 
+teknologi yang digunakan : 
+1. PHP 8.1.6
+2. laravel 9
+3. mysql
+4. Xampp 
+
 penggunaan Aplikasi ini : 
 1. Harus sudah terinstal laravel dan composer serta PHP versi 8.1
 2. setelah itu jalankan git clone https://github.com/alfeushersandy/sekawanmedia.git
