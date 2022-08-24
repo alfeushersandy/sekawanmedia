@@ -11,9 +11,15 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="box">
-                <div class="box-header with-border">
-                    <button onclick="addForm('{{ route('bensin.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                <div class="row">
+                    <div class="box-header with-border">
+                        <button onclick="addForm('{{ route('bensin.store') }}')" class="btn btn-success btn-xs btn-flat"><i class="fa fa-plus-circle"></i> Tambah</button>
+                    </div>
+                    <div class="box-header with-border mt-2">
+                        <a href="{{route('bbm.export')}}" target="_blank" class="btn btn-info">export to excel</a>
+                    </div>
                 </div>
+                <br>
                 <div class="box-body table-responsive mt-2">
                     <table class="table table-stiped table-bordered" style="text-align: center;">
                         <thead>

@@ -6,6 +6,8 @@ use App\Models\PermintaanBbm;
 use App\Models\PermintaanKendaraan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\BbmExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermintaanBbmController extends Controller
 {
@@ -107,5 +109,10 @@ class PermintaanBbmController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function export() 
+    {
+        return Excel::download(new BbmExport, 'permintaanbbm.xlsx');
     }
 }

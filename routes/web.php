@@ -4,7 +4,6 @@ use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PermintaankendaraanController;
 use App\Http\Controllers\PermintaanbbmController;
-use App\Models\PermintaanKendaraan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +38,8 @@ Route::get('/approve/{id}', [PermintaankendaraanController::class, 'approve'])->
 Route::get('data/permintaan', [PermintaankendaraanController::class, 'data'])->name('permintaan.data');
 Route::get('/excel', [PermintaankendaraanController::class, 'export'])->name('permintaan.export');
 
+//route permintaan bensin
 Route::resource('bensin', PermintaanbbmController::class)
 ->except(['data', 'approve']);
 Route::get('data/bensin', [PermintaanbbmController::class, 'data'])->name('bensin.data');
+Route::get('/excel/bensin', [PermintaanbbmController::class, 'export'])->name('bbm.export');
