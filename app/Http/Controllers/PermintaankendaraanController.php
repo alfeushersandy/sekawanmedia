@@ -8,6 +8,7 @@ use App\Models\PermintaanKendaraan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Exports\PermintaanExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PermintaankendaraanController extends Controller
@@ -40,11 +41,45 @@ class PermintaankendaraanController extends Controller
             ->of($permintaan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($permintaan) {
-                return '
-                <div class="btn-group">
-                    <a href="'. route('permintaan.setuju', $permintaan->id_permintaan) .'" class="btn btn-danger">Approve</a>
-                </div>
-                ';
+                if($permintaan->status == 'submited'){
+                    if(Auth::user()->level == 'manager'){
+                        return '
+                    <div class="btn-group">
+                        <a href="'. route('permintaan.setuju', $permintaan->id_permintaan) .'" class="btn btn-success">Approve</a>
+                        <a href="'. route('permintaan.reject', $permintaan->id_permintaan) .'" class="btn btn-danger mr-2">Reject</a>
+                        <a href="'. route('permintaan.kembali', $permintaan->id_permintaan) .'" class="btn btn-success" style="display:none">kembali</a>
+                    </div>
+                    ';
+                    }else{
+                        return '
+                        <div class="btn-group">
+                            <a href="'. route('permintaan.kembali', $permintaan->id_permintaan) .'" class="btn btn-success" style="display:none">kembali</a>
+                        </div>
+                        ';
+                    }
+                }else if($permintaan->status == 'Approved'){
+                    if(Auth::user()->level == 'manager'){
+                        return '
+                    <div class="btn-group">
+                        <a href="'. route('permintaan.setuju', $permintaan->id_permintaan) .'" class="btn btn-danger" style="display:none">Approve</a>
+                        <a href="'. route('permintaan.kembali', $permintaan->id_permintaan) .'" class="btn btn-success">kembali</a>
+                    </div>
+                    ';
+                    }else{
+                        return '
+                        <div class="btn-group">
+                            <a href="'. route('permintaan.kembali', $permintaan->id_permintaan) .'" class="btn btn-success">kembali</a>
+                        </div>
+                        ';
+                    }
+                }else{
+                    return '
+                    <div class="btn-group">
+                        <a href="'. route('permintaan.setuju', $permintaan->id_permintaan) .'" class="btn btn-danger" style="display:none">Approve</a>
+                        <a href="'. route('permintaan.kembali', $permintaan->id_permintaan) .'" class="btn btn-success" style="display:none">kembali</a>
+                    </div>
+                    ';
+                }
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -162,5 +197,34 @@ class PermintaankendaraanController extends Controller
     public function export() 
     {
         return Excel::download(new PermintaanExport, 'permintaan.xlsx');
+    }
+
+    public function kembali($id){
+        $permintaan = PermintaanKendaraan::find($id);
+        $permintaan->status = 'Approved,Kendaraan Sudah Kembali';
+        $permintaan->tanggal_kembali = now();
+        $permintaan->update();
+
+        $kendaraan = Masterkendaraan::find($permintaan->kendaraan_id);
+        $kendaraan->status = true;
+        $kendaraan->update();
+
+        $driver = Driver::find($permintaan->driver_id);
+        $driver->status = true;
+        $driver->update();
+
+        toast('Kendaraan dan Driver telah Kembali', 'success');
+
+        return redirect()->route('permintaan.index');
+    }
+
+    public function reject($id){
+        $permintaan = PermintaanKendaraan::find($id);
+        $permintaan->status = 'Rejected';
+        $permintaan->update();
+
+        toast('Permintaan dengan kode Permintaan ' . $permintaan->kode_permintaan . ' ditolak', 'success');
+
+        return redirect()->route('permintaan.index');
     }
 }

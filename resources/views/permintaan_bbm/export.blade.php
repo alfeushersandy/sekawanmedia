@@ -1,13 +1,13 @@
 <h1>Tabel Permohonan BBM</h1>
+<br>
+<h2>Tanggal {{$tanggal_awal}} - {{$tanggal_akhir}}</h2>
+<br>
 <table>
     <thead>
     <tr>
         <th>No</th>
-        <th>Tanggal</th>
-        <th>Kode Permintaan</th>
-        <th>Kendaraan</th>
-        <th>Driver</th>
-        <th>Jumlah Liter</th>
+        <th>Nama Kendaraan</th>
+        <th>Total</th>
     </tr>
     </thead>
     <tbody>
@@ -17,11 +17,8 @@
     @foreach($bbm as $item)
         <tr>
             <td>{{ $i++ }}</td>
-            <td>{{ $item->tanggal }}</td>
-            <td>{{ $item->kode_permintaan }}</td>
-            <td>{{ $item->nama_kendaraan }}</td>
-            <td>{{ $item->nama_driver }}</td>
-            <td>{{ $item->jumlah}}</td>
+            <td>{{ $item['nama_kendaraan'] }}</td>
+            <td>{{ $item['total'] }}</td>
         </tr>
     @endforeach
     </tbody>

@@ -22,7 +22,8 @@ class PermintaanBbmController extends Controller
      */
     public function index()
     {
-        $permintaan = PermintaanKendaraan::all();
+        $bbm = PermintaanBbm::select('permintaan_id')->get();
+        $permintaan = PermintaanKendaraan::where('status', 'Approved')->whereNotIn('id_permintaan', $bbm)->get();
         return view('permintaan_bbm.index', compact('permintaan'));
     }
 
