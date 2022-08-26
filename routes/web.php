@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BensinreportController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PermintaankendaraanController;
@@ -23,9 +24,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('/dashboard', function(){
-    return view('welcome');
-});
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
 //route kendaraan
 Route::resource('kendaraan', KendaraanController::class)

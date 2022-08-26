@@ -1,38 +1,30 @@
 @extends('layouts.master')
 
 @section('title')
-    Overview
+    Dashboard
 @endsection
 
 @section('content')
     <div class="content">
         <div class="row">
-            <div class="col-12">
-                <h2 class="content-title">Statistics</h2>
+            {{-- <div class="col-12">
+                <h2 class="content-title">Kendaraan Tersedia</h2>
                 <h5 class="content-desc mb-4">Your business growth</h5>
-            </div>
+            </div> --}}
 
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="statistics-card">
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex flex-column justify-content-between align-items-start">
-                            <h5 class="content-desc">Employees</h5>
+                            <h5 class="content-desc">Kendaraan Tersedia</h5>
 
-                            <h3 class="statistics-value">18,500,000</h3>
+                            <h3 class="statistics-value">{{$kendaraan_tersedia}}</h3>
                         </div>
 
                         <button class="btn-statistics">
                             <img src="./assets/img/global/times.svg" alt="">
                         </button>
-                    </div>
-
-                    <div class="statistics-list">
-                        <img class="statistics-image" src="./assets/img/home/history/photo-4.png" alt="">
-                        <img class="statistics-image" src="./assets/img/home/history/photo-3.png" alt="">
-                        <img class="statistics-image" src="./assets/img/home/history/photo.png" alt="">
-                        <img class="statistics-image" src="./assets/img/home/history/photo-1.png" alt="">
-                        <img class="statistics-image" src="./assets/img/home/history/photo-2.png" alt="">
                     </div>
 
                 </div>
@@ -43,29 +35,14 @@
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex flex-column justify-content-between align-items-start">
-                            <h5 class="content-desc">Teams</h5>
+                            <h5 class="content-desc">Driver Tersedia</h5>
 
-                            <h3 class="statistics-value">122,000</h3>
+                            <h3 class="statistics-value">{{$driver_tersedia}}</h3>
                         </div>
 
                         <button class="btn-statistics">
                             <img src="./assets/img/global/times.svg" alt="">
                         </button>
-                    </div>
-
-                    <div class="statistics-list">
-                        <div class="statistics-icon award">
-                            <img src="./assets/img/home/team/award.svg" alt="">
-                        </div>
-                        <div class="statistics-icon globe">
-                            <img src="./assets/img/home/team/globe.svg" alt="">
-                        </div>
-                        <div class="statistics-icon target">
-                            <img src="./assets/img/home/team/target.svg" alt="">
-                        </div>
-                        <div class="statistics-icon box">
-                            <img src="./assets/img/home/team/box.svg" alt="">
-                        </div>
                     </div>
 
                 </div>
@@ -76,9 +53,9 @@
 
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex flex-column justify-content-between align-items-start">
-                            <h5 class="content-desc">Projects</h5>
+                            <h5 class="content-desc">Kendaraan Sedang Keluar</h5>
 
-                            <h3 class="statistics-value">150,000,000</h3>
+                            <h3 class="statistics-value">{{$kendaraan_keluar}}</h3>
                         </div>
 
                         <button class="btn-statistics">
@@ -86,31 +63,13 @@
                         </button>
                     </div>
 
-                    <div class="statistics-list">
-                        <div class="statistics-icon one">
-                            <span>SK</span>
-                        </div>
-                        <div class="statistics-icon two">
-                            <span>DW</span>
-                        </div>
-                        <div class="statistics-icon three">
-                            <span>FJ</span>
-                        </div>
-                        <div class="statistics-icon four">
-                            <span>AP</span>
-                        </div>
-                        <div class="statistics-icon five">
-                            <span>ML</span>
-                        </div>
-                        <!-- <img src="./assets/img/home/icon-1.png" alt=""><img src="./assets/img/home/icon-2.png" alt=""><img src="./assets/img/home/icon-3.png" alt=""><img src="./assets/img/home/icon-4.png" alt=""><img src="./assets/img/home/icon-5.png" alt=""> -->
-                    </div>
 
                 </div>
             </div>
 
         </div>
 
-        <div class="row mt-5">
+        {{-- <div class="row mt-5">
             <div class="col-12 col-lg-6">
                 <h2 class="content-title">Documents</h2>
                 <h5 class="content-desc mb-4">Standard procedure</h5>
@@ -253,7 +212,48 @@
 
                 </div>
             </div>
-        </div>
+        </div> --}}
+        <canvas id="myChart" width="400" height="140"></canvas>
 
     </div>
 @endsection
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Kijang Inova', 'Pick Up', 'Wuling Confero', 'Honda HRV'],
+                datasets: [{
+                    label: 'Permintaan Kendaraan',
+                    data: [`<?php echo $kijang_inova; ?>`, `<?php echo $pick_up; ?>`, `<?php echo $wuling; ?>`, `<?php echo $hrv; ?>`],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        </script>
+@endpush
